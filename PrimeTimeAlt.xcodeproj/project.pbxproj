@@ -7,25 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090B44DD236B769F00CC7DEC /* Counter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44DC236B769F00CC7DEC /* Counter.swift */; };
+		090B44DF236B7DF200CC7DEC /* WolframAlpha.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */; };
+		090B44E1236BE02900CC7DEC /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44E0236BE02900CC7DEC /* Store.swift */; };
+		09B91218236E07DF00437017 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91217236E07DF00437017 /* Root.swift */; };
+		09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91219236E293C00437017 /* FavoritePrimes.swift */; };
+		09BB3FB7236DCA4200541AD8 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BB3FB6236DCA4200541AD8 /* AppState.swift */; };
 		09DC10AF2368CF6B007C457C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10AE2368CF6B007C457C /* AppDelegate.swift */; };
 		09DC10B12368CF6B007C457C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10B02368CF6B007C457C /* SceneDelegate.swift */; };
-		09DC10B32368CF6B007C457C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10B22368CF6B007C457C /* ContentView.swift */; };
 		09DC10B52368CF6B007C457C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DC10B42368CF6B007C457C /* Assets.xcassets */; };
 		09DC10B82368CF6B007C457C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DC10B72368CF6B007C457C /* Preview Assets.xcassets */; };
 		09DC10BB2368CF6B007C457C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09DC10B92368CF6B007C457C /* LaunchScreen.storyboard */; };
-		09DC10C32368CF9D007C457C /* IsPrimeModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10C22368CF9D007C457C /* IsPrimeModalView.swift */; };
+		09DC10C32368CF9D007C457C /* IsPrimeModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10C22368CF9D007C457C /* IsPrimeModal.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		090B44DC236B769F00CC7DEC /* Counter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Counter.swift; sourceTree = "<group>"; };
+		090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WolframAlpha.swift; sourceTree = "<group>"; };
+		090B44E0236BE02900CC7DEC /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		09B91217236E07DF00437017 /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
+		09B91219236E293C00437017 /* FavoritePrimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePrimes.swift; sourceTree = "<group>"; };
+		09BB3FB6236DCA4200541AD8 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		09DC10AB2368CF6B007C457C /* PrimeTimeAlt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrimeTimeAlt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DC10AE2368CF6B007C457C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		09DC10B02368CF6B007C457C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		09DC10B22368CF6B007C457C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		09DC10B42368CF6B007C457C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09DC10B72368CF6B007C457C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		09DC10BA2368CF6B007C457C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		09DC10BC2368CF6B007C457C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09DC10C22368CF9D007C457C /* IsPrimeModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsPrimeModalView.swift; sourceTree = "<group>"; };
+		09DC10C22368CF9D007C457C /* IsPrimeModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsPrimeModal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,12 +70,17 @@
 			children = (
 				09DC10AE2368CF6B007C457C /* AppDelegate.swift */,
 				09DC10B02368CF6B007C457C /* SceneDelegate.swift */,
-				09DC10B22368CF6B007C457C /* ContentView.swift */,
+				09BB3FB6236DCA4200541AD8 /* AppState.swift */,
+				090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */,
+				090B44E0236BE02900CC7DEC /* Store.swift */,
+				09B91217236E07DF00437017 /* Root.swift */,
+				09B91219236E293C00437017 /* FavoritePrimes.swift */,
+				090B44DC236B769F00CC7DEC /* Counter.swift */,
+				09DC10C22368CF9D007C457C /* IsPrimeModal.swift */,
 				09DC10B42368CF6B007C457C /* Assets.xcassets */,
 				09DC10B92368CF6B007C457C /* LaunchScreen.storyboard */,
 				09DC10BC2368CF6B007C457C /* Info.plist */,
 				09DC10B62368CF6B007C457C /* Preview Content */,
-				09DC10C22368CF9D007C457C /* IsPrimeModalView.swift */,
 			);
 			path = PrimeTimeAlt;
 			sourceTree = "<group>";
@@ -151,8 +166,13 @@
 			files = (
 				09DC10AF2368CF6B007C457C /* AppDelegate.swift in Sources */,
 				09DC10B12368CF6B007C457C /* SceneDelegate.swift in Sources */,
-				09DC10C32368CF9D007C457C /* IsPrimeModalView.swift in Sources */,
-				09DC10B32368CF6B007C457C /* ContentView.swift in Sources */,
+				09DC10C32368CF9D007C457C /* IsPrimeModal.swift in Sources */,
+				09BB3FB7236DCA4200541AD8 /* AppState.swift in Sources */,
+				090B44DF236B7DF200CC7DEC /* WolframAlpha.swift in Sources */,
+				09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */,
+				09B91218236E07DF00437017 /* Root.swift in Sources */,
+				090B44DD236B769F00CC7DEC /* Counter.swift in Sources */,
+				090B44E1236BE02900CC7DEC /* Store.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
