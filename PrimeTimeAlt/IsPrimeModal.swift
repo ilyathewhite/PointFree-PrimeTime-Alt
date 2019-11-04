@@ -43,7 +43,7 @@ enum IsPrimeModal {
 
         switch action {
         case .saveFavoritePrimeTapped:
-            let count = state
+            let count = state.count
             state.favoritePrimes.append(state.count)
             return [{ _ in
                 let note = Notification(name: .addedFavoritePrime, userInfo: ["value": count])

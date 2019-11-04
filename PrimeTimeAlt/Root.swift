@@ -83,7 +83,7 @@ struct RootView: View {
         }
         NotificationCenter.default.addObserver(forName: .removedFavoritePrime, object: nil, queue: .main) { notification in
             guard let count = notification.userInfo?["value"] as? Int else { return }
-            store.send(.updateActivity(Root.State.Activity(timestamp: Date(), type: .addedFavoritePrime(count))))
+            store.send(.updateActivity(Root.State.Activity(timestamp: Date(), type: .removedFavoritePrime(count))))
         }
     }
 
