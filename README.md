@@ -1,6 +1,6 @@
 # PointFree-PrimeTime-Alt
 
-A nore efficient approach that doesn't require a global app state of the whole app + app wide reducer + global app UI update on every state change
+A more efficient approach that doesn't require a global app state of the whole app + app wide reducer + global app UI update on every state change
 
 The key differences from PointFree:
 
