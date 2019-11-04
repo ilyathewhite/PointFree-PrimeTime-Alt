@@ -95,21 +95,6 @@ enum Counter {
         }
     }
 
-    static func reducerWillMutate(state: State, action: Action) -> Bool {
-        switch action {
-        case .decrTapped,
-             .incrTapped,
-             .nthPrimeButtonTapped,
-             .nthPrimeResponse,
-             .nthPrimeAlertDismissButtonTapped:
-            return true
-
-        case .update(let shared):
-            return state.shared != shared
-        }
-    }
-
-
     static func countDescription(_ count: Int) -> String {
         return String(count)
     }
@@ -165,7 +150,6 @@ public struct CounterView: View {
             content: { () -> IsPrimeModalView in
                 let isPrimeModalStore = Store<IsPrimeModal.State, IsPrimeModal.Action>(
                     IsPrimeModal.State(count: state.count, favoritePrimes: state.favoritePrimes),
-                    reducerWillMutate: IsPrimeModal.reducerWillMutate(state:action:),
                     reducer: IsPrimeModal.reducer(state:action:)
                 )
 
@@ -190,7 +174,6 @@ public struct CounterView: View {
 struct CounterView_Previews: PreviewProvider {
     static let store = Store<Counter.State, Counter.Action>(
         Counter.State(count: 11, favoritePrimes: []),
-        reducerWillMutate: Counter.reducerWillMutate(state:action:),
         reducer: Counter.reducer(state:action:)
     )
 

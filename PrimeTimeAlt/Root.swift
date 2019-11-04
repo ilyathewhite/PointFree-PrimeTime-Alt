@@ -55,16 +55,6 @@ enum Root {
             }]
         }
     }
-
-    static func reducerWillMutate(state: State, action: Action) -> Bool {
-        switch action {
-        case .update(let shared):
-            return state.shared != shared
-
-        case .updateActivity:
-            return true
-        }
-    }
 }
 
 struct RootView: View {
@@ -73,7 +63,6 @@ struct RootView: View {
     init() {
         let store = Store<Root.State, Root.Action>(
             Root.State(),
-            reducerWillMutate: Root.reducerWillMutate(state:action:),
             reducer: Root.reducer(state:action:)
         )
         self.store = store
@@ -91,7 +80,6 @@ struct RootView: View {
         let counterView = { () -> CounterView in
             let counterStore = Store<Counter.State, Counter.Action>(
                 Counter.State(count: store.state.count, favoritePrimes: store.state.favoritePrimes),
-                reducerWillMutate: Counter.reducerWillMutate(state:action:),
                 reducer: Counter.reducer(state:action:)
             )
 
@@ -105,7 +93,6 @@ struct RootView: View {
         let favoritePrimesView = { () -> FavoritePrimesView in
             let favoritePrimesStore = Store<[Int], FavoritePrimes.Action>(
                 store.state.favoritePrimes,
-                reducerWillMutate: FavoritePrimes.reducerWillMutate(state:action:),
                 reducer: FavoritePrimes.reducer(state:action:)
             )
 
