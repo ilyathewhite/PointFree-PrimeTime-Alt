@@ -66,6 +66,17 @@ enum IsPrimeModal {
         }
     }
 
+    static func reducerWillMutate(state: State, action: Action) -> Bool {
+        switch action {
+        case .saveFavoritePrimeTapped,
+             .removeFavoritePrimeTapped:
+            return true
+
+        case .update(let shared):
+            return state.shared != shared
+        }
+    }
+
     private static func countDescription(_ count: Int) -> String {
         let suffix = isPrime(count) ? " is prime 🎉" : " is not prime :("
         return "\(count)\(suffix)"
@@ -117,6 +128,7 @@ struct IsPrimeModalView: View {
 struct IsPrimeModalView_Previews: PreviewProvider {
     static let store = Store<IsPrimeModal.State, IsPrimeModal.Action>(
         IsPrimeModal.State(count: 11, favoritePrimes: []),
+        reducerWillMutate: IsPrimeModal.reducerWillMutate(state:action:),
         reducer: IsPrimeModal.reducer(state:action:)
     )
 
