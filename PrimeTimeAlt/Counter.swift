@@ -42,11 +42,6 @@ enum Counter {
         var isPrimeAlertLabel: String
         var istNthPrimeAlertShown = false
 
-        var shared: CountAndFavoritePrimes {
-            get { CountAndFavoritePrimes(count: count, favoritePrimes: favoritePrimes) }
-            set { count = newValue.count; favoritePrimes = newValue.favoritePrimes }
-        }
-
         init(count: Int, favoritePrimes: [Int]) {
             self.count = count
             self.favoritePrimes = favoritePrimes
@@ -94,27 +89,11 @@ enum Counter {
             return []
 
         case .update(let shared):
-            if state.shared != shared {
-                state.shared = shared
-            }
+            state.count = shared.count
+            state.favoritePrimes = shared.favoritePrimes
             return []
         }
     }
-
-    static func reducerWillMutate(state: State, action: Action) -> Bool {
-        switch action {
-        case .decrTapped,
-             .incrTapped,
-             .nthPrimeButtonTapped,
-             .nthPrimeResponse,
-             .nthPrimeAlertDismissButtonTapped:
-            return true
-
-        case .update(let shared):
-            return state.shared != shared
-        }
-    }
-
 
     static func countDescription(_ count: Int) -> String {
         return String(count)
@@ -171,13 +150,10 @@ public struct CounterView: View {
             content: { () -> IsPrimeModalView in
                 let isPrimeModalStore = Store<IsPrimeModal.State, IsPrimeModal.Action>(
                     IsPrimeModal.State(count: state.count, favoritePrimes: state.favoritePrimes),
-                    reducerWillMutate: IsPrimeModal.reducerWillMutate(state:action:),
                     reducer: IsPrimeModal.reducer(state:action:)
                 )
 
-                store.add(subscription: isPrimeModalStore.$state.map(\.shared).sink { [weak store] in
-                    store?.send(.update($0))
-                })
+                store.subscribe(to: isPrimeModalStore, \.shared, with: { .update($0) })
 
                 return IsPrimeModalView(store: isPrimeModalStore)
             }
@@ -196,7 +172,6 @@ public struct CounterView: View {
 struct CounterView_Previews: PreviewProvider {
     static let store = Store<Counter.State, Counter.Action>(
         Counter.State(count: 11, favoritePrimes: []),
-        reducerWillMutate: Counter.reducerWillMutate(state:action:),
         reducer: Counter.reducer(state:action:)
     )
 

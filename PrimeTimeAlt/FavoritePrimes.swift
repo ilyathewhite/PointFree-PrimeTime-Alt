@@ -37,10 +37,6 @@ enum FavoritePrimes {
         }
     }
 
-    static func reducerWillMutate(state: [Int], action: Action) -> Bool {
-        return true
-    }
-
     private static func saveEffect(favoritePrimes: [Int]) -> Effect<Action> {
         return { _ in
             let data = try! JSONEncoder().encode(favoritePrimes)

@@ -12,7 +12,6 @@
 		090B44E1236BE02900CC7DEC /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44E0236BE02900CC7DEC /* Store.swift */; };
 		09B91218236E07DF00437017 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91217236E07DF00437017 /* Root.swift */; };
 		09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91219236E293C00437017 /* FavoritePrimes.swift */; };
-		09BB3FB7236DCA4200541AD8 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BB3FB6236DCA4200541AD8 /* AppState.swift */; };
 		09DC10AF2368CF6B007C457C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10AE2368CF6B007C457C /* AppDelegate.swift */; };
 		09DC10B12368CF6B007C457C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10B02368CF6B007C457C /* SceneDelegate.swift */; };
 		09DC10B52368CF6B007C457C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09DC10B42368CF6B007C457C /* Assets.xcassets */; };
@@ -27,7 +26,6 @@
 		090B44E0236BE02900CC7DEC /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		09B91217236E07DF00437017 /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
 		09B91219236E293C00437017 /* FavoritePrimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePrimes.swift; sourceTree = "<group>"; };
-		09BB3FB6236DCA4200541AD8 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		09DC10AB2368CF6B007C457C /* PrimeTimeAlt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrimeTimeAlt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09DC10AE2368CF6B007C457C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		09DC10B02368CF6B007C457C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -70,7 +68,6 @@
 			children = (
 				09DC10AE2368CF6B007C457C /* AppDelegate.swift */,
 				09DC10B02368CF6B007C457C /* SceneDelegate.swift */,
-				09BB3FB6236DCA4200541AD8 /* AppState.swift */,
 				090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */,
 				090B44E0236BE02900CC7DEC /* Store.swift */,
 				09B91217236E07DF00437017 /* Root.swift */,
@@ -167,7 +164,6 @@
 				09DC10AF2368CF6B007C457C /* AppDelegate.swift in Sources */,
 				09DC10B12368CF6B007C457C /* SceneDelegate.swift in Sources */,
 				09DC10C32368CF9D007C457C /* IsPrimeModal.swift in Sources */,
-				09BB3FB7236DCA4200541AD8 /* AppState.swift in Sources */,
 				090B44DF236B7DF200CC7DEC /* WolframAlpha.swift in Sources */,
 				09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */,
 				09B91218236E07DF00437017 /* Root.swift in Sources */,

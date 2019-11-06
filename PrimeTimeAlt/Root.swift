@@ -10,9 +10,20 @@ import Foundation
 import Combine
 import SwiftUI
 
+struct CountAndFavoritePrimes: Equatable {
+    let count: Int
+    let favoritePrimes: [Int]
+}
+
 extension Notification.Name {
     static let addedFavoritePrime = Notification.Name("addedFavoritePrime")
     static let removedFavoritePrime = Notification.Name("removedFavoritePrime")
+}
+
+extension Counter.State {
+    var shared: CountAndFavoritePrimes {
+        CountAndFavoritePrimes(count: count, favoritePrimes: favoritePrimes)
+    }
 }
 
 enum Root {
@@ -25,11 +36,6 @@ enum Root {
         var count = 0
         var favoritePrimes: [Int] = []
         var activityFeed: [Activity] = []
-
-        var shared: CountAndFavoritePrimes {
-            get { CountAndFavoritePrimes(count: count, favoritePrimes: favoritePrimes) }
-            set { count = newValue.count; favoritePrimes = newValue.favoritePrimes }
-        }
 
         struct Activity {
             let timestamp: Date
@@ -45,7 +51,8 @@ enum Root {
     static func reducer(state: inout State, action: Action) -> [Effect<Action>] {
         switch action {
         case .update(let shared):
-            state.shared = shared
+            state.count = shared.count
+            state.favoritePrimes = shared.favoritePrimes
             return []
 
         case .updateActivity(let activity):
@@ -53,16 +60,6 @@ enum Root {
             return [{ _ in
                 print(activity)
             }]
-        }
-    }
-
-    static func reducerWillMutate(state: State, action: Action) -> Bool {
-        switch action {
-        case .update(let shared):
-            return state.shared != shared
-
-        case .updateActivity:
-            return true
         }
     }
 }
@@ -73,7 +70,6 @@ struct RootView: View {
     init() {
         let store = Store<Root.State, Root.Action>(
             Root.State(),
-            reducerWillMutate: Root.reducerWillMutate(state:action:),
             reducer: Root.reducer(state:action:)
         )
         self.store = store
@@ -91,13 +87,10 @@ struct RootView: View {
         let counterView = { () -> CounterView in
             let counterStore = Store<Counter.State, Counter.Action>(
                 Counter.State(count: store.state.count, favoritePrimes: store.state.favoritePrimes),
-                reducerWillMutate: Counter.reducerWillMutate(state:action:),
                 reducer: Counter.reducer(state:action:)
             )
 
-            store.add(subscription: counterStore.$state.map(\.shared).sink { [weak store] in
-                store?.send(.update($0))
-            })
+            store.subscribe(to: counterStore, \.shared, with: { .update($0) })
 
             return CounterView(store: counterStore)
         }()
@@ -105,14 +98,11 @@ struct RootView: View {
         let favoritePrimesView = { () -> FavoritePrimesView in
             let favoritePrimesStore = Store<[Int], FavoritePrimes.Action>(
                 store.state.favoritePrimes,
-                reducerWillMutate: FavoritePrimes.reducerWillMutate(state:action:),
                 reducer: FavoritePrimes.reducer(state:action:)
             )
 
-            store.add(subscription: favoritePrimesStore.$state.sink { [weak store] in
-                guard let store = store else { return }
-                let shared = CountAndFavoritePrimes(count: store.state.count, favoritePrimes: $0)
-                store.send(.update(shared))
+            store.subscribe(to: favoritePrimesStore, \.self, with: { [unowned store] in
+                .update(CountAndFavoritePrimes(count: store.state.count, favoritePrimes: $0))
             })
 
             return FavoritePrimesView(store: favoritePrimesStore)
