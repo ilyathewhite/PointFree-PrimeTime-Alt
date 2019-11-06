@@ -9,6 +9,12 @@
 import SwiftUI
 import Combine
 
+extension IsPrimeModal.State {
+    var shared: CountAndFavoritePrimes {
+        CountAndFavoritePrimes(count: count, favoritePrimes: favoritePrimes)
+    }
+}
+
 enum Counter {
     enum Action {
         case decrTapped

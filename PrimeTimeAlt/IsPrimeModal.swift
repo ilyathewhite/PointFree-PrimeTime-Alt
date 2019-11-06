@@ -12,7 +12,6 @@ enum IsPrimeModal {
     enum Action {
         case saveFavoritePrimeTapped
         case removeFavoritePrimeTapped
-        case update(CountAndFavoritePrimes)
     }
 
     struct State {
@@ -25,13 +24,7 @@ enum IsPrimeModal {
             self.count = count
             self.favoritePrimes = favoritePrimes
             countDescription = IsPrimeModal.countDescription(count)
-            buttonInfo = nil
             buttonInfo = IsPrimeModal.buttonInfo(state: self)
-        }
-
-        var shared: CountAndFavoritePrimes {
-            get { CountAndFavoritePrimes(count: count, favoritePrimes: favoritePrimes) }
-            set { count = newValue.count; favoritePrimes = newValue.favoritePrimes }
         }
     }
 
@@ -57,24 +50,11 @@ enum IsPrimeModal {
                 let note = Notification(name: .removedFavoritePrime, userInfo: ["value": count])
                 NotificationCenter.default.post(note)
             }]
-
-        case .update(let shared):
-            if state.shared != shared {
-                state.shared = shared
-            }
-            return []
         }
     }
 
     static func reducerWillMutate(state: State, action: Action) -> Bool {
-        switch action {
-        case .saveFavoritePrimeTapped,
-             .removeFavoritePrimeTapped:
-            return true
-
-        case .update(let shared):
-            return state.shared != shared
-        }
+        return true
     }
 
     private static func countDescription(_ count: Int) -> String {
