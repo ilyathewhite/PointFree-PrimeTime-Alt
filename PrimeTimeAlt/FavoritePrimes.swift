@@ -10,34 +10,45 @@ import Foundation
 import SwiftUI
 
 enum FavoritePrimes {
-    enum Action {
+    typealias Store = StateStore<[Int], MutatingAction, EffectAction>
+    typealias Reducer = Store.Reducer
+
+    enum MutatingAction {
         case deleteFavoritePrimes(IndexSet)
-        case loadButtonTapped
         case loadedFavoritePrimes([Int])
+    }
+
+    enum EffectAction {
         case saveButtonTapped
+        case loadButtonTapped
     }
 
-    static func reducer(state: inout [Int], action: Action) -> [Effect<Action>] {
-        switch action {
-        case let .deleteFavoritePrimes(indexSet):
-            for index in indexSet {
-                state.remove(at: index)
+    static let reducer = Reducer(
+        run: { state, action in
+            switch action {
+            case let .deleteFavoritePrimes(indexSet):
+                for index in indexSet {
+                    state.remove(at: index)
+                }
+                return []
+
+            case let .loadedFavoritePrimes(favoritePrimes):
+                state = favoritePrimes
+                return []
             }
-            return []
+        },
+        effects: { state, action in
+            switch action {
+            case .saveButtonTapped:
+                return [ saveEffect(favoritePrimes: state) ]
 
-        case let .loadedFavoritePrimes(favoritePrimes):
-            state = favoritePrimes
-            return []
-
-        case .saveButtonTapped:
-            return [ saveEffect(favoritePrimes: state) ]
-
-        case .loadButtonTapped:
-            return [ loadEffect ]
+            case .loadButtonTapped:
+                return [ loadEffect ]
+            }
         }
-    }
+    )
 
-    private static func saveEffect(favoritePrimes: [Int]) -> Effect<Action> {
+    private static func saveEffect(favoritePrimes: [Int]) -> Reducer.Effect {
         return { _ in
             let data = try! JSONEncoder().encode(favoritePrimes)
             let documentsPath = NSSearchPathForDirectoriesInDomains(
@@ -51,7 +62,7 @@ enum FavoritePrimes {
         }
     }
 
-    private static let loadEffect: Effect<Action> = { callback in
+    private static let loadEffect: Reducer.Effect = { callback in
         let documentsPath = NSSearchPathForDirectoriesInDomains(
             .documentDirectory, .userDomainMask, true
             )[0]
@@ -62,14 +73,14 @@ enum FavoritePrimes {
             let data = try? Data(contentsOf: favoritePrimesUrl),
             let favoritePrimes = try? JSONDecoder().decode([Int].self, from: data)
             else { return }
-        return callback(.loadedFavoritePrimes(favoritePrimes))
+        return callback(.mutating(.loadedFavoritePrimes(favoritePrimes)))
     }
 }
 
 public struct FavoritePrimesView: View {
-    @ObservedObject var store: Store<[Int], FavoritePrimes.Action>
+    @ObservedObject var store: FavoritePrimes.Store
 
-    init(store: Store<[Int], FavoritePrimes.Action>) {
+    init(store: FavoritePrimes.Store) {
         self.store = store
     }
 
@@ -79,17 +90,17 @@ public struct FavoritePrimesView: View {
                 Text("\(prime)")
             }
             .onDelete { indexSet in
-                self.store.send(.deleteFavoritePrimes(indexSet))
+                self.store.send(.mutating(.deleteFavoritePrimes(indexSet)))
             }
         }
         .navigationBarTitle("Favorite primes")
         .navigationBarItems(
             trailing: HStack {
                 Button("Save") {
-                    self.store.send(.saveButtonTapped)
+                    self.store.send(.effect(.saveButtonTapped))
                 }
                 Button("Load") {
-                  self.store.send(.loadButtonTapped)
+                    self.store.send(.effect(.loadButtonTapped))
                 }
             }
         )

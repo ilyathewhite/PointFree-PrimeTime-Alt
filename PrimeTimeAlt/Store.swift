@@ -9,32 +9,59 @@
 import Foundation
 import Combine
 
-public typealias Effect<Action> = (@escaping (Action) -> Void) -> Void
+public enum StateAction<MutatingAction, EffectAction> {
+    case mutating(MutatingAction)
+    case effect(EffectAction)
+}
 
-public typealias Reducer<Value, Action> = (inout Value, Action) -> [Effect<Action>]
+public typealias StateEffect<MutatingAction, EffectAction> =
+    (@escaping (StateAction<MutatingAction, EffectAction>) -> Void) -> Void
 
-public class Store<State, Action>: ObservableObject {
-    private let reducer: Reducer<State, Action>
+public struct StateReducer<Value, MutatingAction, EffectAction> {
+    public typealias Action = StateAction<MutatingAction, EffectAction>
+    public typealias Effect = StateEffect<MutatingAction, EffectAction>
+
+    let run: (inout Value, MutatingAction) -> [Effect]
+    let effects: (Value, EffectAction) -> [Effect]
+}
+
+extension StateReducer where EffectAction == Never {
+    init(_ run: @escaping (inout Value, MutatingAction) -> [Effect]) {
+        self = StateReducer(run: run, effects: { _, _ in [] })
+    }
+}
+
+public class StateStore<State, MutatingAction, EffectAction>: ObservableObject {
+    public typealias Reducer = StateReducer<State, MutatingAction, EffectAction>
+
+    private let reducer: Reducer
     private var subscriptions = Set<AnyCancellable>()
 
     @Published public private(set) var state: State
 
-    public init(_ initialValue: State, reducer: @escaping Reducer<State, Action>) {
+    public init(_ initialValue: State, reducer: Reducer) {
         self.reducer = reducer
         self.state = initialValue
     }
 
-    public func send(_ action: Action) {
-        let effects = self.reducer(&(self.state), action)
+    public func send(_ action: Reducer.Action) {
+        let effects: [Reducer.Effect]
+        switch action {
+        case .mutating(let mutatingAction):
+            effects = reducer.run(&state, mutatingAction)
+        case .effect(let effectAction):
+            effects = reducer.effects(state, effectAction)
+        }
+
         effects.forEach { effect in
             effect(self.send)
         }
     }
 
-    public func subscribe<OtherState, OtherValue, OtherAction>(
-        to otherStore: Store<OtherState, OtherAction>,
+    public func subscribe<OtherState, OtherValue, OtherMutatingAction, OtherEffectAction>(
+        to otherStore: StateStore<OtherState, OtherMutatingAction, OtherEffectAction>,
         _ keyPath: KeyPath<OtherState, OtherValue>,
-        with action: @escaping (OtherValue) -> Action,
+        with action: @escaping (OtherValue) -> Reducer.Action,
         compare: @escaping (OtherValue, OtherValue) -> Bool
     ) {
         // dropFirst() to send only future values because the already has the current
@@ -44,11 +71,10 @@ public class Store<State, Action>: ObservableObject {
         })
     }
 
-    public func subscribe<OtherState, OtherValue: Equatable, OtherAction>(
-        to otherStore: Store<OtherState, OtherAction>,
+    public func subscribe<OtherState, OtherValue: Equatable, OtherMutatingAction, OtherEffectAction>(
+        to otherStore: StateStore<OtherState, OtherMutatingAction, OtherEffectAction>,
         _ keyPath: KeyPath<OtherState, OtherValue>,
-        with action: @escaping (OtherValue) -> Action) {
+        with action: @escaping (OtherValue) -> Reducer.Action) {
         subscribe(to: otherStore, keyPath, with: action, compare: ==)
     }
 }
-

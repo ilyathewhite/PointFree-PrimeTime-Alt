@@ -27,7 +27,10 @@ extension Counter.State {
 }
 
 enum Root {
-    enum Action {
+    typealias Store = StateStore<State, MutatingAction, Never>
+    typealias Reducer = Store.Reducer
+
+    enum MutatingAction {
         case update(CountAndFavoritePrimes)
         case updateActivity(State.Activity)
     }
@@ -37,18 +40,22 @@ enum Root {
         var favoritePrimes: [Int] = []
         var activityFeed: [Activity] = []
 
+        enum ActivityType {
+            case addedFavoritePrime(Int)
+            case removedFavoritePrime(Int)
+        }
+
         struct Activity {
             let timestamp: Date
             let type: ActivityType
 
-            enum ActivityType {
-                case addedFavoritePrime(Int)
-                case removedFavoritePrime(Int)
+            static func activity(_ value: ActivityType) -> State.Activity {
+                State.Activity(timestamp: Date(), type: value)
             }
         }
     }
 
-    static func reducer(state: inout State, action: Action) -> [Effect<Action>] {
+    static let reducer = Reducer { state, action in
         switch action {
         case .update(let shared):
             state.count = shared.count
@@ -65,44 +72,41 @@ enum Root {
 }
 
 struct RootView: View {
-    @ObservedObject var store: Store<Root.State, Root.Action>
+    @ObservedObject var store: Root.Store
 
     init() {
-        let store = Store<Root.State, Root.Action>(
-            Root.State(),
-            reducer: Root.reducer(state:action:)
-        )
+        let store = Root.Store(Root.State(), reducer: Root.reducer)
         self.store = store
         NotificationCenter.default.addObserver(forName: .addedFavoritePrime, object: nil, queue: .main) { notification in
             guard let count = notification.userInfo?["value"] as? Int else { return }
-            store.send(.updateActivity(Root.State.Activity(timestamp: Date(), type: .addedFavoritePrime(count))))
+            store.send(.mutating(.updateActivity(.activity(.addedFavoritePrime(count)))))
         }
         NotificationCenter.default.addObserver(forName: .removedFavoritePrime, object: nil, queue: .main) { notification in
             guard let count = notification.userInfo?["value"] as? Int else { return }
-            store.send(.updateActivity(Root.State.Activity(timestamp: Date(), type: .removedFavoritePrime(count))))
+            store.send(.mutating(.updateActivity(.activity(.removedFavoritePrime(count)))))
         }
     }
 
     var body: some View {
         let counterView = { () -> CounterView in
-            let counterStore = Store<Counter.State, Counter.Action>(
+            let counterStore = Counter.Store(
                 Counter.State(count: store.state.count, favoritePrimes: store.state.favoritePrimes),
-                reducer: Counter.reducer(state:action:)
+                reducer: Counter.reducer
             )
 
-            store.subscribe(to: counterStore, \.shared, with: { .update($0) })
+            store.subscribe(to: counterStore, \.shared, with: { .mutating(.update($0)) })
 
             return CounterView(store: counterStore)
         }()
 
         let favoritePrimesView = { () -> FavoritePrimesView in
-            let favoritePrimesStore = Store<[Int], FavoritePrimes.Action>(
+            let favoritePrimesStore = FavoritePrimes.Store(
                 store.state.favoritePrimes,
-                reducer: FavoritePrimes.reducer(state:action:)
+                reducer: FavoritePrimes.reducer
             )
 
             store.subscribe(to: favoritePrimesStore, \.self, with: { [unowned store] in
-                .update(CountAndFavoritePrimes(count: store.state.count, favoritePrimes: $0))
+                .mutating(.update(CountAndFavoritePrimes(count: store.state.count, favoritePrimes: $0)))
             })
 
             return FavoritePrimesView(store: favoritePrimesStore)

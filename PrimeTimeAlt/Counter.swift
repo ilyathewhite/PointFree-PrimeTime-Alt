@@ -16,7 +16,10 @@ extension IsPrimeModal.State {
 }
 
 enum Counter {
-    enum Action {
+    typealias Store = StateStore<State, MutatingAction, Never>
+    typealias Reducer = Store.Reducer
+
+    enum MutatingAction {
         case decrTapped
         case incrTapped
         case nthPrimeButtonTapped
@@ -26,7 +29,7 @@ enum Counter {
     }
 
     struct State {
-        typealias ButtonInfo = (title: String, action: Action)
+        typealias ButtonInfo = (title: String, action: MutatingAction)
 
         let navigationBarTitle = "Counter demo"
         let minusButtonInfo: ButtonInfo = ("+", .incrTapped)
@@ -51,7 +54,7 @@ enum Counter {
         }
     }
 
-    static func reducer(state: inout State, action: Action) -> [Effect<Action>] {
+    static let reducer = Reducer { state, action in
         defer {
             state.countDescription = Counter.countDescription(state.count)
             state.nthPrimeButtonInfo = Counter.nthButtonInfo(state.count)
@@ -73,7 +76,7 @@ enum Counter {
             return [{ callback in
                 nthPrime(count) { prime in
                     DispatchQueue.main.async {
-                        callback(.nthPrimeResponse(prime))
+                        callback(.mutating(.nthPrimeResponse(prime)))
                     }
                 }
             }]
@@ -119,15 +122,15 @@ enum Counter {
 }
 
 public struct CounterView: View {
-    @ObservedObject var store: Store<Counter.State, Counter.Action>
+    @ObservedObject var store: Counter.Store
     @State private var isPrimeModalShown = false
 
-    init(store: Store<Counter.State, Counter.Action>) {
+    init(store: Counter.Store) {
         self.store = store
     }
 
     func button(_ info: Counter.State.ButtonInfo) -> some View {
-        Button(info.title) { self.store.send(info.action) }
+        Button(info.title) { self.store.send(.mutating(info.action)) }
     }
 
     public var body: some View {
@@ -148,12 +151,12 @@ public struct CounterView: View {
         .sheet(
             isPresented: $isPrimeModalShown,
             content: { () -> IsPrimeModalView in
-                let isPrimeModalStore = Store<IsPrimeModal.State, IsPrimeModal.Action>(
+                let isPrimeModalStore = IsPrimeModal.Store(
                     IsPrimeModal.State(count: state.count, favoritePrimes: state.favoritePrimes),
-                    reducer: IsPrimeModal.reducer(state:action:)
+                    reducer: IsPrimeModal.reducer
                 )
 
-                store.subscribe(to: isPrimeModalStore, \.shared, with: { .update($0) })
+                store.subscribe(to: isPrimeModalStore, \.shared, with: { .mutating(.update($0)) })
 
                 return IsPrimeModalView(store: isPrimeModalStore)
             }
@@ -162,7 +165,7 @@ public struct CounterView: View {
             Alert(
                 title: Text(state.isPrimeAlertLabel),
                 dismissButton: .default(Text("Ok")) {
-                    self.store.send(.nthPrimeAlertDismissButtonTapped)
+                    self.store.send(.mutating(.nthPrimeAlertDismissButtonTapped))
                 }
             )
         }
@@ -170,9 +173,9 @@ public struct CounterView: View {
 }
 
 struct CounterView_Previews: PreviewProvider {
-    static let store = Store<Counter.State, Counter.Action>(
+    static let store = Counter.Store(
         Counter.State(count: 11, favoritePrimes: []),
-        reducer: Counter.reducer(state:action:)
+        reducer: Counter.reducer
     )
 
     static var previews: some View {

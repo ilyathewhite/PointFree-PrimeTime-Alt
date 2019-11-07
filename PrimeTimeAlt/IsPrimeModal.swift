@@ -9,7 +9,10 @@
 import SwiftUI
 
 enum IsPrimeModal {
-    enum Action {
+    typealias Store = StateStore<State, MutatingAction, Never>
+    typealias Reducer = Store.Reducer
+
+    enum MutatingAction {
         case saveFavoritePrimeTapped
         case removeFavoritePrimeTapped
     }
@@ -18,7 +21,7 @@ enum IsPrimeModal {
         var count: Int
         var favoritePrimes: [Int]
         var countDescription: String
-        var buttonInfo: (actionTitle: String, action: Action)?
+        var buttonInfo: (actionTitle: String, action: MutatingAction)?
 
         init(count: Int, favoritePrimes: [Int]) {
             self.count = count
@@ -28,7 +31,7 @@ enum IsPrimeModal {
         }
     }
 
-    static func reducer(state: inout State, action: Action) -> [Effect<Action>] {
+    static let reducer = Reducer { state, action in
         defer {
             state.countDescription = countDescription(state.count)
             state.buttonInfo = buttonInfo(state: state)
@@ -58,7 +61,7 @@ enum IsPrimeModal {
         return "\(count)\(suffix)"
     }
 
-    private static func buttonInfo(state: State) -> (actionTitle: String, action: Action)? {
+    private static func buttonInfo(state: State) -> (actionTitle: String, action: MutatingAction)? {
         if isPrime(state.count) {
             if state.favoritePrimes.contains(state.count) {
                 return (
@@ -89,22 +92,22 @@ enum IsPrimeModal {
 }
 
 struct IsPrimeModalView: View {
-    @ObservedObject var store: Store<IsPrimeModal.State, IsPrimeModal.Action>
+    @ObservedObject var store: IsPrimeModal.Store
 
     var body: some View {
         VStack {
             Text(store.state.countDescription)
             store.state.buttonInfo.map { (text, action) in
-                Button(text, action: { self.store.send(action) })
+                Button(text, action: { self.store.send(.mutating(action)) })
             }
         }
     }
 }
 
 struct IsPrimeModalView_Previews: PreviewProvider {
-    static let store = Store<IsPrimeModal.State, IsPrimeModal.Action>(
+    static let store = IsPrimeModal.Store(
         IsPrimeModal.State(count: 11, favoritePrimes: []),
-        reducer: IsPrimeModal.reducer(state:action:)
+        reducer: IsPrimeModal.reducer
     )
 
     static var previews: some View {
