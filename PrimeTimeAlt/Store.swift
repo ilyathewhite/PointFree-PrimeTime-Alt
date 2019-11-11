@@ -12,22 +12,33 @@ import Combine
 public enum StateAction<MutatingAction, EffectAction> {
     case mutating(MutatingAction)
     case effect(EffectAction)
+    case noAction
 }
 
 public typealias StateEffect<MutatingAction, EffectAction> =
-    (@escaping (StateAction<MutatingAction, EffectAction>) -> Void) -> Void
+    AnyPublisher<StateAction<MutatingAction, EffectAction>, Never>
 
 public struct StateReducer<Value, MutatingAction, EffectAction> {
     public typealias Action = StateAction<MutatingAction, EffectAction>
     public typealias Effect = StateEffect<MutatingAction, EffectAction>
 
-    let run: (inout Value, MutatingAction) -> [Effect]
-    let effects: (Value, EffectAction) -> [Effect]
+    let run: (inout Value, MutatingAction) -> Effect?
+    let effect: (Value, EffectAction) -> Effect
+
+    static func effect(_ body: @escaping () -> Action) -> Effect {
+        Effect(
+            Deferred {
+                Future { promise in
+                    promise(.success(body()))
+                }
+            }
+        )
+    }
 }
 
 extension StateReducer where EffectAction == Never {
-    init(_ run: @escaping (inout Value, MutatingAction) -> [Effect]) {
-        self = StateReducer(run: run, effects: { _, _ in [] })
+    init(_ run: @escaping (inout Value, MutatingAction) -> Effect?) {
+        self = StateReducer(run: run, effect: { _, effectAction in AnyPublisher(Just(.effect(effectAction))) })
     }
 }
 
@@ -36,25 +47,35 @@ public class StateStore<State, MutatingAction, EffectAction>: ObservableObject {
 
     private let reducer: Reducer
     private var subscriptions = Set<AnyCancellable>()
+    private var effects = PassthroughSubject<AnyPublisher<Reducer.Action, Never>, Never>()
 
     @Published public private(set) var state: State
 
     public init(_ initialValue: State, reducer: Reducer) {
         self.reducer = reducer
         self.state = initialValue
+
+        subscriptions.insert(
+            effects
+                .flatMap { $0 }
+                .receive(on: RunLoop.main)
+                .sink(receiveValue: { [weak self] in self?.send($0) })
+        )
     }
 
     public func send(_ action: Reducer.Action) {
-        let effects: [Reducer.Effect]
+        let effect: Reducer.Effect?
         switch action {
         case .mutating(let mutatingAction):
-            effects = reducer.run(&state, mutatingAction)
+            effect = reducer.run(&state, mutatingAction)
         case .effect(let effectAction):
-            effects = reducer.effects(state, effectAction)
+            effect = reducer.effect(state, effectAction)
+        case .noAction:
+            effect = nil
         }
 
-        effects.forEach { effect in
-            effect(self.send)
+        if let e = effect {
+            effects.send(e)
         }
     }
 

@@ -41,18 +41,20 @@ enum IsPrimeModal {
         case .saveFavoritePrimeTapped:
             let count = state.count
             state.favoritePrimes.append(state.count)
-            return [{ _ in
+            return Reducer.effect {
                 let note = Notification(name: .addedFavoritePrime, userInfo: ["value": count])
                 NotificationCenter.default.post(note)
-            }]
+                return .noAction
+            }
 
         case .removeFavoritePrimeTapped:
             let count = state.count
             state.favoritePrimes.removeAll(where: { $0 == state.count })
-            return [{ _ in
+            return Reducer.effect {
                 let note = Notification(name: .removedFavoritePrime, userInfo: ["value": count])
                 NotificationCenter.default.post(note)
-            }]
+                return .noAction
+            }
         }
     }
 

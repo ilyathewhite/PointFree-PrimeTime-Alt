@@ -64,37 +64,33 @@ enum Counter {
         switch action {
         case .decrTapped:
             state.count -= 1
-            return []
+            return nil
 
         case .incrTapped:
             state.count += 1
-            return []
+            return nil
 
         case .nthPrimeButtonTapped:
             state.isNthPrimeButtonDisabled = true
             let count = state.count
-            return [{ callback in
-                nthPrime(count) { prime in
-                    DispatchQueue.main.async {
-                        callback(.mutating(.nthPrimeResponse(prime)))
-                    }
-                }
-            }]
+            return nthPrime(count)
+                .map { .mutating(.nthPrimeResponse($0)) }
+                .eraseToAnyPublisher()
 
         case let .nthPrimeResponse(prime):
             state.countPrime = prime
             state.isNthPrimeButtonDisabled = false
             state.istNthPrimeAlertShown = true
-            return []
+            return nil
 
         case .nthPrimeAlertDismissButtonTapped:
             state.istNthPrimeAlertShown = false
-            return []
+            return nil
 
         case .update(let shared):
             state.count = shared.count
             state.favoritePrimes = shared.favoritePrimes
-            return []
+            return nil
         }
     }
 

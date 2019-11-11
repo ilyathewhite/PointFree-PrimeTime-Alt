@@ -60,13 +60,14 @@ enum Root {
         case .update(let shared):
             state.count = shared.count
             state.favoritePrimes = shared.favoritePrimes
-            return []
+            return nil
 
         case .updateActivity(let activity):
             state.activityFeed.append(activity)
-            return [{ _ in
+            return Reducer.effect {
                 print(activity)
-            }]
+                return .noAction
+            }
         }
     }
 }

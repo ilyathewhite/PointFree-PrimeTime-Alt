@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 enum FavoritePrimes {
     typealias Store = StateStore<[Int], MutatingAction, EffectAction>
@@ -30,26 +31,26 @@ enum FavoritePrimes {
                 for index in indexSet {
                     state.remove(at: index)
                 }
-                return []
+                return nil
 
             case let .loadedFavoritePrimes(favoritePrimes):
                 state = favoritePrimes
-                return []
+                return nil
             }
         },
-        effects: { state, action in
+        effect: { state, action in
             switch action {
             case .saveButtonTapped:
-                return [ saveEffect(favoritePrimes: state) ]
+                return saveEffect(favoritePrimes: state)
 
             case .loadButtonTapped:
-                return [ loadEffect ]
+                return loadEffect()
             }
         }
     )
 
     private static func saveEffect(favoritePrimes: [Int]) -> Reducer.Effect {
-        return { _ in
+        Reducer.effect {
             let data = try! JSONEncoder().encode(favoritePrimes)
             let documentsPath = NSSearchPathForDirectoriesInDomains(
                 .documentDirectory, .userDomainMask, true
@@ -58,22 +59,24 @@ enum FavoritePrimes {
             let favoritePrimesUrl = documentsUrl
                 .appendingPathComponent("favorite-primes.json")
             try! data.write(to: favoritePrimesUrl)
-            return
+            return .noAction
         }
     }
 
-    private static let loadEffect: Reducer.Effect = { callback in
-        let documentsPath = NSSearchPathForDirectoriesInDomains(
-            .documentDirectory, .userDomainMask, true
-            )[0]
-        let documentsUrl = URL(fileURLWithPath: documentsPath)
-        let favoritePrimesUrl = documentsUrl
-            .appendingPathComponent("favorite-primes.json")
-        guard
-            let data = try? Data(contentsOf: favoritePrimesUrl),
-            let favoritePrimes = try? JSONDecoder().decode([Int].self, from: data)
-            else { return }
-        return callback(.mutating(.loadedFavoritePrimes(favoritePrimes)))
+    private static func loadEffect() -> Reducer.Effect {
+        Reducer.effect {
+            let documentsPath = NSSearchPathForDirectoriesInDomains(
+                .documentDirectory, .userDomainMask, true
+                )[0]
+            let documentsUrl = URL(fileURLWithPath: documentsPath)
+            let favoritePrimesUrl = documentsUrl
+                .appendingPathComponent("favorite-primes.json")
+            guard
+                let data = try? Data(contentsOf: favoritePrimesUrl),
+                let favoritePrimes = try? JSONDecoder().decode([Int].self, from: data)
+                else { return .noAction }
+            return .mutating(.loadedFavoritePrimes(favoritePrimes))
+        }
     }
 }
 

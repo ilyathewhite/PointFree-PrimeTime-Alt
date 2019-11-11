@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 private let wolframAlphaApiKey = "6H69Q3-828TKQJ4EP"
 
@@ -19,24 +20,13 @@ struct WolframAlphaResult: Decodable {
     }
 }
 
-func nthPrime(_ n: Int, callback: @escaping (Int?) -> Void) -> Void {
-    wolframAlpha(query: "prime \(n)") { result in
-        callback(
-            result
-                .flatMap {
-                    $0.queryresult
-                        .pods
-                        .first(where: { $0.primary == .some(true) })?
-                        .subpods
-                        .first?
-                        .plaintext
-            }
-            .flatMap(Int.init)
-        )
-    }
+func nthPrime(_ count: Int) -> AnyPublisher<Int?, Never> {
+    wolframAlpha(query: "prime \(count)")
+        .map { $0.flatMap(getNumber) }
+        .eraseToAnyPublisher()
 }
 
-func wolframAlpha(query: String, callback: @escaping (WolframAlphaResult?) -> Void) -> Void {
+func wolframAlpha(query: String) -> AnyPublisher<WolframAlphaResult?, Never> {
     var components = URLComponents(string: "https://api.wolframalpha.com/v2/query")!
     components.queryItems = [
         URLQueryItem(name: "input", value: query),
@@ -45,11 +35,22 @@ func wolframAlpha(query: String, callback: @escaping (WolframAlphaResult?) -> Vo
         URLQueryItem(name: "appid", value: wolframAlphaApiKey),
     ]
 
-    URLSession.shared.dataTask(with: components.url(relativeTo: nil)!) { data, response, error in
-        callback(
-            data
-                .flatMap { try? JSONDecoder().decode(WolframAlphaResult.self, from: $0) }
-        )
-    }
-    .resume()
+    let url = components.url(relativeTo: nil)!
+
+    return URLSession.shared.dataTaskPublisher(for: url)
+        .map(\.data)
+        .decode(type: WolframAlphaResult?.self, decoder: JSONDecoder())
+        .replaceError(with: nil)
+        .eraseToAnyPublisher()
+}
+
+func getNumber(_ result: WolframAlphaResult) -> Int? {
+    let plainText = result
+        .queryresult
+        .pods
+        .first(where: { $0.primary == .some(true) })?
+        .subpods
+        .first?
+        .plaintext
+    return plainText.flatMap(Int.init)
 }
