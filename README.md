@@ -20,12 +20,4 @@ An important caveat: in this example, there is one part of state that is not cap
     @State private var isPrimeModalShown = false
 ```
 
-It's impossible to keep it on the same lavel as the state for `CounterView` because that view gets rebuilt on the shared state changes, so if we follow the reducer model completely, we would have to put this kind of state in the global state, which would mean following the PointFree model. Alternatively, we could treat it as an effect or use @State (which is the simplest approach). For me, this seems to be a good compromise for performance and ease of writing code.
-
-## Other critique
-
-The current PointFree approach doesn't use Swift / SwiftUI features that make it easy for the runtime to optimize performance. @State, @Binding, @EnvironmentObject, as well as Publisher, Future, Subject etc are meant to be used and give the runtime much more context for optimizations. Doing everything by hand may be instructive but is not great for production code (performance, amount of code to write, additional testing).
-
-The reducer pattern seems to be a good fit for the case when each action applies to the state as a whole, but in the case of UI, instead of one stream of actions, there are multiple UI event streams that affect different parts of the state. Combining those streams (using Combine in this case) matches how we think about UI changes much better than applying actions to the whole state. The simplest example of this is calculated properties. Strictly following the reducer pattern hides the relationship of the computed variable to the part of the state that it depends on. A calculated property makes this relationship much more visible. I think that the same applies to multiple UI event streams that affect part of the state.
-
-A pattern that is based on combining UI event streams would be equally functional, leverage a lot of performant and reusable code, and match how we think about UI.
+It's impossible to keep it on the same lavel as the state for `CounterView` because that view gets rebuilt on the shared state changes.
