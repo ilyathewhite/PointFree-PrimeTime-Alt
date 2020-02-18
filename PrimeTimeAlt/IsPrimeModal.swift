@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import ReducerArchitecture
 
 enum IsPrimeModal {
     typealias Store = StateStore<State, MutatingAction, Never>

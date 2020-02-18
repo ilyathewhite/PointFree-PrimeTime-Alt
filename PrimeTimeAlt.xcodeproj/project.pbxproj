@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		090B44DD236B769F00CC7DEC /* Counter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44DC236B769F00CC7DEC /* Counter.swift */; };
 		090B44DF236B7DF200CC7DEC /* WolframAlpha.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */; };
-		090B44E1236BE02900CC7DEC /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090B44E0236BE02900CC7DEC /* Store.swift */; };
+		0970073023FB43E500C213EE /* ReducerArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 0970072F23FB43E500C213EE /* ReducerArchitecture */; };
 		09B91218236E07DF00437017 /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91217236E07DF00437017 /* Root.swift */; };
 		09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B91219236E293C00437017 /* FavoritePrimes.swift */; };
 		09DC10AF2368CF6B007C457C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09DC10AE2368CF6B007C457C /* AppDelegate.swift */; };
@@ -23,7 +23,6 @@
 /* Begin PBXFileReference section */
 		090B44DC236B769F00CC7DEC /* Counter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Counter.swift; sourceTree = "<group>"; };
 		090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WolframAlpha.swift; sourceTree = "<group>"; };
-		090B44E0236BE02900CC7DEC /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		09B91217236E07DF00437017 /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
 		09B91219236E293C00437017 /* FavoritePrimes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePrimes.swift; sourceTree = "<group>"; };
 		09DC10AB2368CF6B007C457C /* PrimeTimeAlt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrimeTimeAlt.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0970073023FB43E500C213EE /* ReducerArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,7 +69,6 @@
 				09DC10AE2368CF6B007C457C /* AppDelegate.swift */,
 				09DC10B02368CF6B007C457C /* SceneDelegate.swift */,
 				090B44DE236B7DF200CC7DEC /* WolframAlpha.swift */,
-				090B44E0236BE02900CC7DEC /* Store.swift */,
 				09B91217236E07DF00437017 /* Root.swift */,
 				09B91219236E293C00437017 /* FavoritePrimes.swift */,
 				090B44DC236B769F00CC7DEC /* Counter.swift */,
@@ -106,6 +105,9 @@
 			dependencies = (
 			);
 			name = PrimeTimeAlt;
+			packageProductDependencies = (
+				0970072F23FB43E500C213EE /* ReducerArchitecture */,
+			);
 			productName = PrimeTimeAlt;
 			productReference = 09DC10AB2368CF6B007C457C /* PrimeTimeAlt.app */;
 			productType = "com.apple.product-type.application";
@@ -134,6 +136,9 @@
 				Base,
 			);
 			mainGroup = 09DC10A22368CF6B007C457C;
+			packageReferences = (
+				0970072E23FB43E500C213EE /* XCRemoteSwiftPackageReference "ReducerArchitecture" */,
+			);
 			productRefGroup = 09DC10AC2368CF6B007C457C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -168,7 +173,6 @@
 				09B9121A236E293C00437017 /* FavoritePrimes.swift in Sources */,
 				09B91218236E07DF00437017 /* Root.swift in Sources */,
 				090B44DD236B769F00CC7DEC /* Counter.swift in Sources */,
-				090B44E1236BE02900CC7DEC /* Store.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +366,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0970072E23FB43E500C213EE /* XCRemoteSwiftPackageReference "ReducerArchitecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RocketLaunchpad/ReducerArchitecture.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0970072F23FB43E500C213EE /* ReducerArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0970072E23FB43E500C213EE /* XCRemoteSwiftPackageReference "ReducerArchitecture" */;
+			productName = ReducerArchitecture;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 09DC10A32368CF6B007C457C /* Project object */;
 }

@@ -9,6 +9,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import ReducerArchitecture
 
 struct CountAndFavoritePrimes: Equatable {
     let count: Int
@@ -95,7 +96,7 @@ struct RootView: View {
                 reducer: Counter.reducer
             )
 
-            store.subscribe(to: counterStore, \.shared, with: { .mutating(.update($0)) })
+            store.bind(to: counterStore, on: \.shared, with: { .mutating(.update($0)) })
 
             return CounterView(store: counterStore)
         }()
@@ -106,7 +107,7 @@ struct RootView: View {
                 reducer: FavoritePrimes.reducer
             )
 
-            store.subscribe(to: favoritePrimesStore, \.self, with: { [unowned store] in
+            store.bind(to: favoritePrimesStore, on: \.self, with: { [unowned store] in
                 .mutating(.update(CountAndFavoritePrimes(count: store.state.count, favoritePrimes: $0)))
             })
 

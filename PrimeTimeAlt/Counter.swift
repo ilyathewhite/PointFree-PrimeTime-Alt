@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Combine
+import ReducerArchitecture
 
 extension IsPrimeModal.State {
     var shared: CountAndFavoritePrimes {
@@ -152,7 +153,7 @@ public struct CounterView: View {
                     reducer: IsPrimeModal.reducer
                 )
 
-                store.subscribe(to: isPrimeModalStore, \.shared, with: { .mutating(.update($0)) })
+                store.bind(to: isPrimeModalStore, on: \.shared, with: { .mutating(.update($0)) })
 
                 return IsPrimeModalView(store: isPrimeModalStore)
             }
